@@ -1,4 +1,5 @@
 import sqlite3
+from .conexiondb import ConexionDB
 
 #Conexión a la base de datos 
 conn = sqlite3.connect("habitos.db")
