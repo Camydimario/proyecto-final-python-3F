@@ -1,4 +1,5 @@
 import tkinter as tk
+from model.consultas_dao import crear_tabla
 
 def menu_bar(root):
     bar = tk.Menu(root)
@@ -16,7 +17,7 @@ def menu_bar(root):
     bar.add_cascade(label= 'Ayuda', menu = menu_ayuda)
     
 #submenu inicio
-    menu_inicio.add_command(label= 'Conectar BD')
+    menu_inicio.add_command(label= 'Conectar BD', command= lambda:crear_tabla())
     menu_inicio.add_command(label= 'Desconectar DB')
     menu_inicio.add_command(label= 'Salir', command= root.destroy)
 

@@ -1,5 +1,7 @@
 import tkinter as tk
 from tkinter import ttk
+import model.consultas_dao as consulta
+from model.consultas_dao import Cursos, guardar_cursos
 
 class Frame(tk.Frame):
 
@@ -7,6 +9,7 @@ class Frame(tk.Frame):
         super().__init__(root, width=480, height=320)
         self.root = root
         self.pack()
+        self.id_curso = None
         self.backg = '#F0F8FF'
         self.foreg = '#1E3A8A'
         self.config(bg=self.backg)
@@ -30,8 +33,8 @@ class Frame(tk.Frame):
         self.label_modalidad = tk.Label(self, text='Modalidad', font=('Helvetica', 11, 'bold'), bg=self.backg, fg=self.foreg)
         self.label_modalidad.grid(row=3, column=0, padx=10, pady=10)
 
-        self.label_finalizado = tk.Label(self, font=('Helvetica', 11, 'bold'), bg=self.backg, fg=self.foreg)
-        self.label_finalizado.grid(row=4, column=0, padx=10, pady=10)
+        self.label_estado = tk.Label(self, font=('Helvetica', 11, 'bold'), bg=self.backg, fg=self.foreg)
+        self.label_estado.grid(row=4, column=0, padx=10, pady=10)
 
     # ENTRADAS
     def input_form(self):
@@ -51,16 +54,16 @@ class Frame(tk.Frame):
 
         # COMBOBOX
         self.modalidad = tk.StringVar()
-        self.combo_modalidad = ttk.Combobox(self, textvariable=self.modalidad, values=["Presencial", "Online",  "Híbrido"], state='disabled')
+        self.combo_modalidad = ttk.Combobox(self, textvariable=self.modalidad, values=["Presencial", "Virtual",  "Híbrido"], state='disabled')
         self.combo_modalidad.config(width=47)
         self.combo_modalidad.set("Seleccione una opción...")  # Simula placeholder
         self.combo_modalidad.grid(row=3, column=1, padx=10, pady=10, columnspan=2)
 
         # CHECKBUTTON
-        self.finalizado = tk.BooleanVar()
-        self.check_finalizado = tk.Checkbutton(self, variable=self.finalizado, text='¿Finalizado?', font=("Helvetica", 10), bg=self.backg)
-        self.check_finalizado.config(state='disabled')
-        self.check_finalizado.grid(row=4, column=1, padx=10, pady=10, sticky="e", columnspan=2)
+        self.estado = tk.BooleanVar()
+        self.check_estado = tk.Checkbutton(self, variable=self.estado, text='¿Finalizado?', font=("Helvetica", 10), bg=self.backg)
+        self.check_estado.config(state='disabled')
+        self.check_estado.grid(row=4, column=1, padx=10, pady=10, sticky="e", columnspan=2)
 
 
     # BOTONES
@@ -69,7 +72,7 @@ class Frame(tk.Frame):
         self.btn_alta.config(width=20, font=('Arial', 12, 'bold'), fg='#FFFFFF', bg="#3ACD66", cursor='hand2', activebackground='#1E7F56', activeforeground='#000000', relief='ridge', bd=3)
         self.btn_alta.grid(row=5, column=0, padx=10, pady=10)
 
-        self.btn_guardar = tk.Button(self, text='Guardar')
+        self.btn_guardar = tk.Button(self, text='Guardar', command=self.guardar_campos)
         self.btn_guardar.config(width=20, font=('Arial', 12, 'bold'), fg='#FFFFFF', bg='#1CA9C9', cursor='hand2', activebackground='#0D7583', activeforeground='#000000', relief='ridge', bd=3, state='disabled')
         self.btn_guardar.grid(row=5, column=1, padx=10, pady=10)
 
@@ -95,6 +98,23 @@ class Frame(tk.Frame):
         self.btn_delete = tk.Button(self, text='Borrar')
         self.btn_delete.config(width=20, font=('Arial', 12, 'bold'), fg='#FFFFFF', bg='#FF7300', cursor='hand2', activebackground='#CC3D00', activeforeground='#000000', relief='ridge')
         self.btn_delete.grid(row=7, column=1, padx=10, pady=10)
+        
+    def guardar_campos(self):
+        cursos = Cursos(
+            self.curso.get(),
+            self.profesor.get(),
+            self.fecha.get(),
+            self.modalidad.get(),
+            self.estado.get()
+        )
+        
+        if self.id_curso == None:
+            consulta.guardar_cursos(cursos)
+        # else:
+        #     consulta.editar_cursos(cursos, int(self.id_curso)) #Falta hacer función en consultas_dao y vista
+        self.mostrar_tabla()
+        self.bloquear_campos()
+        
 
     # HABILITAR
     def habilitar_campos(self):
@@ -102,7 +122,7 @@ class Frame(tk.Frame):
         self.entry_profesor.config(state='normal')
         self.entry_fecha.config(state='normal')
         self.combo_modalidad.config(state='readonly')
-        self.check_finalizado.config(state='normal')
+        self.check_estado.config(state='normal')
         self.btn_guardar.config(state='normal')
         self.btn_cancelar.config(state='normal')
         self.btn_alta.config(state='disabled')
@@ -113,7 +133,7 @@ class Frame(tk.Frame):
         self.entry_profesor.config(state='disabled')
         self.entry_fecha.config(state='disabled')
         self.combo_modalidad.config(state='disabled')
-        self.check_finalizado.config(state='disabled')
+        self.check_estado.config(state='disabled')
         self.btn_guardar.config(state='disabled')
         self.btn_cancelar.config(state='disabled')
         self.btn_alta.config(state='normal')
@@ -122,4 +142,4 @@ class Frame(tk.Frame):
         self.profesor.set('')
         self.fecha.set('')
         self.combo_modalidad.set("Seleccione una opción...")
-        self.finalizado.set(False)
+        self.estado.set(False)

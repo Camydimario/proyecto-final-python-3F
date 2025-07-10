@@ -14,7 +14,6 @@ def crear_tabla():
         CREATE TABLE IF NOT EXISTS Profesores (
             ID INTEGER PRIMARY KEY AUTOINCREMENT,
             Nombre TEXT NOT NULL,
-            Apellido TEXT NOT NULL,
             Cursos TEXT NOT NULL,
             Modalidad_ID INTEGER,
             FOREIGN KEY (Modalidad_ID) REFERENCES Modalidades(ID)
@@ -67,15 +66,39 @@ class Cursos:
         self.estado = estado
     
     def __str__(self):
-        return f'Cursos[{self.nomnbre}, {self.profesor},{self.fecha},{self.modalidad},{self.estado}]'
+        return f'Cursos[{self.nombre}, {self.profesor},{self.fecha},{self.modalidad},{self.estado}]'
     
-    def guardar_cursos(curso):
-        conn = ConexionDB()
-        
-        sql = f"""
-            INSERT INTO Cursos(Nombre, Profesor,Fecha, Modalidad, Estado)
-            VALUES('{curso.nombre}','{curso.profesor}','{curso.fecha}',{curso.modalidad}, '{curso.estado});
-        """
-        
-        conn.cursor.execute()
-        conn.cerrar_conexion()
+def guardar_cursos(curso):
+    conn = ConexionDB()
+
+    # Buscar Modalidad_ID
+    conn.cursor.execute("SELECT ID FROM Modalidades WHERE Tipo = '{}'".format(curso.modalidad))
+    modalidad_row = conn.cursor.fetchone()
+    if modalidad_row:
+        modalidad_id = modalidad_row[0]
+    else:
+        conn.cursor.execute("INSERT INTO Modalidades (Tipo) VALUES ('{}')".format(curso.modalidad))
+        modalidad_id = conn.cursor.lastrowid
+
+    # Buscar Profesor_ID
+    conn.cursor.execute("SELECT ID FROM Profesores WHERE Nombre = '{}'".format(curso.profesor))
+    profesor_row = conn.cursor.fetchone()
+    if profesor_row:
+        profesor_id = profesor_row[0]
+    else:
+        conn.cursor.execute(
+            "INSERT INTO Profesores (Nombre, Cursos, Modalidad_ID) VALUES ('{}', '{}', {})".format(
+                curso.profesor, curso.nombre, modalidad_id
+            )
+        )
+        profesor_id = conn.cursor.lastrowid
+
+    # Insertar curso
+    conn.cursor.execute(
+        "INSERT INTO Cursos (Nombre, Profesor_ID, Fecha, Modalidad_ID, Estado) "
+        "VALUES ('{}', {}, '{}', {}, {})".format(
+            curso.nombre, profesor_id, curso.fecha, modalidad_id, int(curso.estado)
+        )
+    )
+
+    conn.cerrar_conexion()
