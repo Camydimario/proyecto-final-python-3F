@@ -12,7 +12,7 @@ def menu_bar(root):
 
     bar.add_cascade(label= 'Inicio', menu = menu_inicio)
     bar.add_cascade(label= 'Consultas', menu = menu_consultas)
-    bar.add_cascade(label= 'Acerca de Healthy Plus...', menu = menu_acerca_de)
+    bar.add_cascade(label= 'Acerca de Class Tracker...', menu = menu_acerca_de)
     bar.add_cascade(label= 'Ayuda', menu = menu_ayuda)
     
 #submenu inicio

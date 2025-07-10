@@ -4,8 +4,8 @@ from controller.menu import menu_bar
 
 def main():
     ventana = tk.Tk()
-    ventana.title("Healthy Plus")
-    ventana.iconbitmap("img/healthy_strength.ico")
+    ventana.title("Class Tracker")
+    ventana.iconbitmap("img/class_tracker2.ico")
     ventana.resizable(0,0)
     
     app = Frame(root = ventana)
