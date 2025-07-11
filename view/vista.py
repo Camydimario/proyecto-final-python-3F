@@ -103,7 +103,8 @@ class Frame(tk.Frame):
         self.btn_delete = tk.Button(self, text='Borrar', command=self.eliminar_registro)
         self.btn_delete.config(width=20, font=('Arial', 12, 'bold'), fg='#FFFFFF', bg='#FF7300', cursor='hand2', activebackground='#CC3D00', activeforeground='#000000', relief='ridge')
         self.btn_delete.grid(row=7, column=1, padx=10, pady=10)
-            
+    
+    #Función GUARDAR    
     def guardar_curso(self):
         cursos = Cursos(
             self.curso.get(),
@@ -120,6 +121,7 @@ class Frame(tk.Frame):
         self.mostrar_tabla()
         self.bloquear_campos()
         
+    #Función EDITAR       
     def editar_curso(self):
         try:
             seleccion = self.tabla.selection()
@@ -146,7 +148,7 @@ class Frame(tk.Frame):
         except Exception:
             messagebox.showerror("Error", "No se pudo cargar el registro para editar.")
 
-        
+    #Función ELIMINAR    
     def eliminar_registro(self):
         try:
             seleccion = self.tabla.selection()

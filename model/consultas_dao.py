@@ -40,22 +40,6 @@ def crear_tabla():
         conn.cerrar_conexion()
     except:
         print("No se pudo crear correctamente las tablas!")
-
-# Para precargar los valores de modalidades
-# def precargar_modalidades():
-#     conn = ConexionDB()
-#     modalidades = ['Presencial', 'Virtual', 'Híbrido']
-#     try:
-#         for tipo in modalidades:
-#             conn.cursor.execute("INSERT OR IGNORE INTO Modalidades (Tipo) VALUES (?)", (tipo,))
-#         conn.cerrar_conexion()
-#     except Exception as e:
-#         print("Error al precargar modalidades:", e)
-
-
-# def conectar_bd():
-#     crear_tabla()
-#     precargar_modalidades()
     
 class Cursos:
     def __init__(self, nombre, profesor, fecha, modalidad_id, estado):
@@ -68,6 +52,7 @@ class Cursos:
     def __str__(self):
         return f'Cursos[{self.nombre}, {self.profesor}, {self.fecha}, {self.modalidad_id}, {self.estado}]'
 
+#Función para mostrar los datos en el treeview
 def listar_cursos():
     conn = ConexionDB()
     sql = """
@@ -85,14 +70,15 @@ def listar_cursos():
     except:
         return []
 
-
+# Función para obtener todas las modalidades registradas (ID y tipo)
 def listar_modalidades():
     conn = ConexionDB()
     conn.cursor.execute("SELECT ID, Tipo FROM Modalidades")
     modalidades = conn.cursor.fetchall()
     conn.cerrar_conexion()
     return modalidades
-    
+
+# Guarda un nuevo curso. Si el profesor o la modalidad no existen, los crea.    
 def guardar_campos(curso):
     conn = ConexionDB()
 
@@ -125,7 +111,7 @@ def guardar_campos(curso):
     conn.cerrar_conexion()
 
 
-
+# Actualiza un curso existente, insertando modalidad/profesor si no existen
 def editar_campos(curso, id):
     conn = ConexionDB()
 
@@ -158,7 +144,7 @@ def editar_campos(curso, id):
 
     conn.cerrar_conexion()
 
-    
+# Elimina un curso según su ID. No elimina profesores ni modalidades asociadas.
 def borrar_campos(id):
     conn = ConexionDB()
     
