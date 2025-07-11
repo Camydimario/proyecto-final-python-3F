@@ -91,6 +91,10 @@ class Frame(tk.Frame):
         self.tabla.heading('#4', text='Modalidad')
         self.tabla.heading('#5', text='Finalizado')
         
+        self.tabla.delete(*self.tabla.get_children())
+        for curso in consulta.listar_cursos(): 
+            self.tabla.insert('', 0, text=curso[0], values=curso[1:])
+
     # BOTONES EDITAR Y BORRAR
         self.btn_editar = tk.Button(self, text='Editar', command=self.editar_curso)
         self.btn_editar.config(width=20, font=('Arial', 12, 'bold'), fg='#FFFFFF', bg='#1CA9C9', cursor='hand2', activebackground='#0D7583', activeforeground='#000000', relief='ridge')
@@ -112,7 +116,7 @@ class Frame(tk.Frame):
         if self.id_curso == None:
             consulta.guardar_campos(cursos)
         else:
-            consulta.editar_campos(cursos, int(self.id_curso)) #Falta hacer función en consultas_dao y vista
+            consulta.editar_campos(cursos, int(self.id_curso))
         self.mostrar_tabla()
         self.bloquear_campos()
         
@@ -129,7 +133,7 @@ class Frame(tk.Frame):
             nombre_profesor = self.tabla.item(seleccion)['values'][1]
             fecha = self.tabla.item(seleccion)['values'][2]
             modalidad = self.tabla.item(seleccion)['values'][3]
-            estado = self.tabla.item(seleccion)['values'][4]
+            estado = self.tabla.item(seleccion)['values'][4] == 'Sí'
 
             self.habilitar_campos()
 
