@@ -1,4 +1,4 @@
-Trabajo Practico Final Pytrhon Intermedio 
+Trabajo Practico Final Python Intermedio 
 
 Integrantes:
 
