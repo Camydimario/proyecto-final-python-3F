@@ -1,7 +1,7 @@
 import tkinter as tk
-from tkinter import ttk
+from tkinter import ttk,messagebox
 import model.consultas_dao as consulta
-from model.consultas_dao import Cursos, guardar_cursos
+from model.consultas_dao import Cursos
 
 class Frame(tk.Frame):
 
@@ -72,7 +72,7 @@ class Frame(tk.Frame):
         self.btn_alta.config(width=20, font=('Arial', 12, 'bold'), fg='#FFFFFF', bg="#3ACD66", cursor='hand2', activebackground='#1E7F56', activeforeground='#000000', relief='ridge', bd=3)
         self.btn_alta.grid(row=5, column=0, padx=10, pady=10)
 
-        self.btn_guardar = tk.Button(self, text='Guardar', command=self.guardar_campos)
+        self.btn_guardar = tk.Button(self, text='Guardar', command=self.guardar_curso)
         self.btn_guardar.config(width=20, font=('Arial', 12, 'bold'), fg='#FFFFFF', bg='#1CA9C9', cursor='hand2', activebackground='#0D7583', activeforeground='#000000', relief='ridge', bd=3, state='disabled')
         self.btn_guardar.grid(row=5, column=1, padx=10, pady=10)
 
@@ -90,16 +90,17 @@ class Frame(tk.Frame):
         self.tabla.heading('#3', text='Fecha')
         self.tabla.heading('#4', text='Modalidad')
         self.tabla.heading('#5', text='Finalizado')
-
-        self.btn_editar = tk.Button(self, text='Editar')
+        
+    # BOTONES EDITAR Y BORRAR
+        self.btn_editar = tk.Button(self, text='Editar', command=self.editar_curso)
         self.btn_editar.config(width=20, font=('Arial', 12, 'bold'), fg='#FFFFFF', bg='#1CA9C9', cursor='hand2', activebackground='#0D7583', activeforeground='#000000', relief='ridge')
         self.btn_editar.grid(row=7, column=0, padx=10, pady=10)
 
-        self.btn_delete = tk.Button(self, text='Borrar')
+        self.btn_delete = tk.Button(self, text='Borrar', command=self.eliminar_registro)
         self.btn_delete.config(width=20, font=('Arial', 12, 'bold'), fg='#FFFFFF', bg='#FF7300', cursor='hand2', activebackground='#CC3D00', activeforeground='#000000', relief='ridge')
         self.btn_delete.grid(row=7, column=1, padx=10, pady=10)
-        
-    def guardar_campos(self):
+            
+    def guardar_curso(self):
         cursos = Cursos(
             self.curso.get(),
             self.profesor.get(),
@@ -109,11 +110,59 @@ class Frame(tk.Frame):
         )
         
         if self.id_curso == None:
-            consulta.guardar_cursos(cursos)
-        # else:
-        #     consulta.editar_cursos(cursos, int(self.id_curso)) #Falta hacer función en consultas_dao y vista
+            consulta.guardar_campos(cursos)
+        else:
+            consulta.editar_campos(cursos, int(self.id_curso)) #Falta hacer función en consultas_dao y vista
         self.mostrar_tabla()
         self.bloquear_campos()
+        
+    def editar_curso(self):
+        try:
+            seleccion = self.tabla.selection()
+            if not seleccion:
+                messagebox.showwarning("Advertencia", "Seleccione un registro para editar.")
+                return
+
+            self.id_curso = self.tabla.item(seleccion)['text']
+
+            nombre_curso = self.tabla.item(seleccion)['values'][0]
+            nombre_profesor = self.tabla.item(seleccion)['values'][1]
+            fecha = self.tabla.item(seleccion)['values'][2]
+            modalidad = self.tabla.item(seleccion)['values'][3]
+            estado = self.tabla.item(seleccion)['values'][4]
+
+            self.habilitar_campos()
+
+            self.curso.set(nombre_curso)
+            self.profesor.set(nombre_profesor)
+            self.fecha.set(fecha)
+            self.modalidad.set(modalidad)
+            self.estado.set(estado)
+
+        except Exception:
+            messagebox.showerror("Error", "No se pudo cargar el registro para editar.")
+
+        
+    def eliminar_registro(self):
+        try:
+            seleccion = self.tabla.selection()
+            if not seleccion:
+                messagebox.showwarning("Advertencia", "Seleccione un registro para eliminar.")
+                return
+
+            self.id_curso = self.tabla.item(seleccion)['text']
+
+            response = messagebox.askyesno("Confirmar", "¿Está seguro que quiere eliminar?")
+            if response:
+                consulta.borrar_campos(int(self.id_curso))
+                messagebox.showinfo("Eliminado", "El registro se eliminó correctamente.")
+                self.mostrar_tabla()
+
+            self.id_curso = None
+
+        except Exception:
+            messagebox.showerror("Error", "No se pudo eliminar el registro.")
+
         
 
     # HABILITAR

@@ -68,7 +68,7 @@ class Cursos:
     def __str__(self):
         return f'Cursos[{self.nombre}, {self.profesor},{self.fecha},{self.modalidad},{self.estado}]'
     
-def guardar_cursos(curso):
+def guardar_campos(curso):
     conn = ConexionDB()
 
     # Buscar Modalidad_ID
@@ -101,4 +101,23 @@ def guardar_cursos(curso):
         )
     )
 
+def editar_campos(curso, id):
+    conn = ConexionDB
+    sql = f"""
+        UPDATE Cursos SET Nombre = '{curso.nombre}', Profesor = '{curso.profesor}', fecha = '{curso.fecha}, modalidad = {curso.modalida}, estado = {curso.estado}
+        WHERE ID = {id}
+    """
+    
+    conn.cursor.execute(sql)
+    conn.cerrar_conexion()
+    
+def borrar_campos(id):
+    conn = ConexionDB
+    
+    sql = f"""
+            DELETE FROM Cursos WHERE ID = {id};
+    
+    """
+    
+    conn.cursor.execute(sql)
     conn.cerrar_conexion()
